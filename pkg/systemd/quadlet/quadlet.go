@@ -60,6 +60,7 @@ const (
 	KeyAddHost               = "AddHost"
 	KeyAllTags               = "AllTags"
 	KeyAnnotation            = "Annotation"
+	KeyAppArmorUnconfined    = "AppArmorUnconfined"
 	KeyArch                  = "Arch"
 	KeyAuthFile              = "AuthFile"
 	KeyAutoUpdate            = "AutoUpdate"
@@ -242,6 +243,7 @@ var (
 				KeyAddDevice:             true,
 				KeyAddHost:               true,
 				KeyAnnotation:            true,
+				KeyAppArmorUnconfined:    true,
 				KeyAutoUpdate:            true,
 				KeyCgroupsMode:           true,
 				KeyContainerName:         true,
@@ -725,6 +727,11 @@ func ConvertContainer(container *parser.UnitFile, isUser bool, unitsInfoMap map[
 	securityLabelDisable := container.LookupBooleanWithDefault(ContainerGroup, KeySecurityLabelDisable, false)
 	if securityLabelDisable {
 		podman.add("--security-opt", "label=disable")
+	}
+
+	appArmorUnconfined := container.LookupBooleanWithDefault(ContainerGroup, KeyAppArmorUnconfined, true)
+	if appArmorUnconfined {
+		podman.add("--security-opt=apparmor=unconfined")
 	}
 
 	securityLabelNested := container.LookupBooleanWithDefault(ContainerGroup, KeySecurityLabelNested, false)
